@@ -54,9 +54,12 @@ class ClearableFileInputWithImagePreview(ClearableFileInput):
         %(input)s
     </div>"""
 
+    def __init__(self, *args, **kwargs):
+        self.size = kwargs.pop('size', '300x300')
+        super(ClearableFileInputWithImagePreview, self).__init__(*args, **kwargs)
+
     def get_hidden_field_id(self, name):
-        i = name.rindex('_')
-        return "id_%s_%d" % (name[:i], int(name[i + 1:]) + 1)
+        return name + '_hidden'
 
     def image_preview_id(self, name):
         """
@@ -83,7 +86,7 @@ class ClearableFileInputWithImagePreview(ClearableFileInput):
                 'data-hidden_field_id="%(hidden_field_id)s" '
                 'data-point_stage_id="%(point_stage_id)s" '
                 'data-ppoi_id="%(ppoi_id)s" class="sizedimage-preview"/>') % {
-            'sized_url': value.thumbnail['300x300'],
+            'sized_url': value.thumbnail[self.size],
             'image_preview_id': self.image_preview_id(name),
             'hidden_field_id': self.get_hidden_field_id(name),
             'point_stage_id': self.get_point_stage_id(name),
